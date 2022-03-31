@@ -12,6 +12,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 bool buttonWasUp = true;
 bool dispEnabled = false;
+bool shownAlert = false;
 unsigned long timing;
 
 void setup() {
@@ -21,7 +22,7 @@ void setup() {
   lcd.init();
   lcd.backlight();
 }
-bool shownAlert = false;
+
 void loop() {
   bool buttonIsUp = !digitalRead(BUTTON_PIN);
   if (buttonWasUp && !buttonIsUp) {
@@ -38,7 +39,6 @@ void loop() {
     float temp = dht.readTemperature();
     float hum = dht.readHumidity();
 
-
     if (!(isnan(hum) || isnan(temp))) {
       if ((temp > 24.0 || hum < 40.0) && !shownAlert) {
         lcd.clear();
@@ -50,13 +50,13 @@ void loop() {
         shownAlert = false;
       } else printData(temp, hum);
     } else printData(0.0, 0.0);
-  timing = millis();
+    timing = millis();
   }
 }
 
 int printData(float t, float h) {
   lcd.clear();
-  
+
   lcd.setCursor(2, 0);
   lcd.print("Temp: ");
   lcd.setCursor(10, 0);
