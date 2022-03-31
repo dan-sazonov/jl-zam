@@ -1,16 +1,27 @@
+#include <Adafruit_Sensor.h>
 #include <LiquidCrystal_I2C.h>
 #include <Wire.h> 
+#include <DHT.h>
+#include <DHT_U.h>
 
+#define DHT_PIN 2 
+
+DHT dht(DHT_PIN, DHT11);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   lcd.init();  
   lcd.backlight();
-
+  dht.begin();
 }
 
 void loop() {
-  printData(12.34, 42.13);
+  float hum = dht.readHumidity();
+  float temp = dht.readTemperature();
+  
+  if !(isnan(hum) || isnan(dht)) {
+    printData(temp, hum);
+  }
 }
 
 int printData(float t, float h) {
