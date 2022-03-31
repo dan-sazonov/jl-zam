@@ -21,7 +21,7 @@ void setup() {
   lcd.init();
   lcd.backlight();
 }
-
+bool shownAlert = false;
 void loop() {
   bool buttonIsUp = !digitalRead(BUTTON_PIN);
   if (buttonWasUp && !buttonIsUp) {
@@ -38,12 +38,25 @@ void loop() {
     float temp = dht.readTemperature();
     float hum = dht.readHumidity();
 
-    if (isnan(hum) || isnan(temp)) printData(0.00, 0.00);
-    else printData(temp, hum);
+
+    if (!(isnan(hum) || isnan(temp))) {
+      if ((temp > 24.0 || hum < 40.0) && !shownAlert) {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("OPEN THE WINDOW!");
+        shownAlert = true;
+      } else if (shownAlert) {
+        printData(temp, hum);
+        shownAlert = false;
+      } else printData(temp, hum);
+    } else printData(0.0, 0.0);
+  timing = millis();
   }
 }
 
 int printData(float t, float h) {
+  lcd.clear();
+  
   lcd.setCursor(2, 0);
   lcd.print("Temp: ");
   lcd.setCursor(10, 0);
