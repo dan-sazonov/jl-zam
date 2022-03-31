@@ -13,29 +13,22 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 boolean buttonWasUp = true;
 boolean ledEnabled = false;
+unsigned long timing;
 
 void setup() {
+  Serial.begin(9600);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT);
+
   dht.begin();
   lcd.init();
   lcd.backlight();
-
-  pinMode(LED_PIN, OUTPUT);
-  pinMode(BUTTON_PIN, INPUT);
 }
-
+int i = 0;
 void loop() {
-  float temp = dht.readTemperature();
-  float hum = dht.readHumidity();
-
-  if (isnan(hum) || isnan(temp)) {
-    printData(0.00, 0.00);
-  } else {
-    printData(temp, hum);
-  }
-
+  Serial.println(i++);
   boolean buttonIsUp = !digitalRead(BUTTON_PIN);
   if (buttonWasUp && !buttonIsUp) {
-    delay(10);
     buttonIsUp = digitalRead(BUTTON_PIN);
     if (!buttonIsUp) {
       ledEnabled = !ledEnabled;
@@ -43,6 +36,18 @@ void loop() {
     }
   }
   buttonWasUp = buttonIsUp;
+
+
+  if (millis() - timing > 2000) {
+    float temp = dht.readTemperature();
+    float hum = dht.readHumidity();
+
+    if (isnan(hum) || isnan(temp)) {
+      printData(0.00, 0.00);
+    } else {
+      printData(temp, hum);
+    }
+  }
 }
 
 int printData(float t, float h) {
