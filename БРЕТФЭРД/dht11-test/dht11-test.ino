@@ -1,9 +1,6 @@
-#include <DHT_U.h>
 #include <DHT.h>
+#include <DHT_U.h>
 
-#include <Adafruit_Sensor.h>
-
-#include "DHT.h"
 #define DHTPIN 2 // Тот самый номер пина, о котором упоминалось выше
 // Одна из следующих строк закоментирована. Снимите комментарий, если подключаете датчик DHT11 к arduino
 //DHT dht(DHTPIN,); //Инициация датчика

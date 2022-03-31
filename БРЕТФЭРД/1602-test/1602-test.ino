@@ -1,20 +1,70 @@
+#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-#include <Wire.h> 
-//#include <LiquidCrystal_I2C.h> // Подключение библиотеки
-//#include <LiquidCrystal_PCF8574.h> // Подключение альтернативной библиотеки
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
 
-LiquidCrystal_I2C lcd(0x27,16,2); // Указываем I2C адрес (наиболее распространенное значение), а также параметры экрана (в случае LCD 1602 - 2 строки по 16 символов в каждой 
-//LiquidCrystal_PCF8574 lcd(0x27); // Вариант для библиотеки PCF8574 
+#define DHT_PIN 2
+#define BUTTON_PIN 9
+#define LED_PIN 13
 
-void setup()
-{
-  lcd.init();                      // Инициализация дисплея  
-  lcd.backlight();                 // Подключение подсветки
-  lcd.setCursor(0,0);              // Установка курсора в начало первой строки
-  lcd.print("sus");       // Набор текста на первой строке
-  lcd.setCursor(0,1);              // Установка курсора в начало второй строки
-  lcd.print("sos");       // Набор текста на второй строке
+DHT dht(DHT_PIN, DHT11);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+boolean buttonWasUp = true;
+boolean ledEnabled = false;
+unsigned long timing;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT);
+
+  dht.begin();
+  lcd.init();
+  lcd.backlight();
 }
-void loop()
-{
+int i = 0;
+void loop() {
+  Serial.println(i++);
+
+
+  boolean buttonIsUp = !digitalRead(BUTTON_PIN);
+  if (buttonWasUp && !buttonIsUp) {
+    buttonIsUp = digitalRead(BUTTON_PIN);
+    if (digitalRead(BUTTON_PIN)) {
+      ledEnabled = !ledEnabled;
+      while (digitalRead(BUTTON_PIN)) {}
+      digitalWrite(13, ledEnabled);
+    }
+  }
+  buttonWasUp = buttonIsUp;
+
+
+  if (millis() - timing > 2000) {
+    float temp = dht.readTemperature();
+    float hum = dht.readHumidity();
+
+    if (isnan(hum) || isnan(temp)) {
+      printData(0.00, 0.00);
+    } else {
+      printData(temp, hum);
+    }
+  }
+}
+
+int printData(float t, float h) {
+  lcd.setCursor(2, 0);
+  lcd.print("Temp: ");
+  lcd.setCursor(10, 0);
+  lcd.print(t);
+  lcd.setCursor(15, 0);
+  lcd.print("C");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Humidity: ");
+  lcd.setCursor(10, 1);
+  lcd.print(h);
+  lcd.setCursor(15, 1);
+  lcd.print("%");
 }
