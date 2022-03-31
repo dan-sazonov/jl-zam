@@ -5,51 +5,42 @@
 #include <DHT_U.h>
 
 #define DHT_PIN 2
-#define BUTTON_PIN 9
-#define LED_PIN 13
+#define BUTTON_PIN 11
 
 DHT dht(DHT_PIN, DHT11);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 boolean buttonWasUp = true;
-boolean ledEnabled = false;
+boolean dispEnabled = false;
 unsigned long timing;
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(13, OUTPUT);
   pinMode(BUTTON_PIN, INPUT);
 
   dht.begin();
   lcd.init();
   lcd.backlight();
 }
-int i = 0;
+
 void loop() {
-  Serial.println(i++);
-
-
   boolean buttonIsUp = !digitalRead(BUTTON_PIN);
   if (buttonWasUp && !buttonIsUp) {
     buttonIsUp = digitalRead(BUTTON_PIN);
     if (digitalRead(BUTTON_PIN)) {
-      ledEnabled = !ledEnabled;
+      dispEnabled = !dispEnabled;
       while (digitalRead(BUTTON_PIN)) {}
-      digitalWrite(13, ledEnabled);
+      digitalWrite(13, dispEnabled);
     }
   }
   buttonWasUp = buttonIsUp;
-
 
   if (millis() - timing > 2000) {
     float temp = dht.readTemperature();
     float hum = dht.readHumidity();
 
-    if (isnan(hum) || isnan(temp)) {
-      printData(0.00, 0.00);
-    } else {
-      printData(temp, hum);
-    }
+    if (isnan(hum) || isnan(temp)) printData(0.00, 0.00);
+    else printData(temp, hum);
   }
 }
 
