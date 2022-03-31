@@ -60,6 +60,12 @@ int printData(float t, float h) {
 }
 
 void dispWorking(bool state) {
-  if (state) lcd.display();
-  else lcd.noDisplay();
+  if (state) {
+    lcd.display();
+    lcd.backlight();
+  }
+  else {
+    lcd.noDisplay();
+    lcd.noBacklight();
+  }
 }
