@@ -10,12 +10,11 @@
 DHT dht(DHT_PIN, DHT11);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-boolean buttonWasUp = true;
-boolean dispEnabled = false;
+bool buttonWasUp = true;
+bool dispEnabled = false;
 unsigned long timing;
 
 void setup() {
-  pinMode(13, OUTPUT);
   pinMode(BUTTON_PIN, INPUT);
 
   dht.begin();
@@ -24,13 +23,13 @@ void setup() {
 }
 
 void loop() {
-  boolean buttonIsUp = !digitalRead(BUTTON_PIN);
+  bool buttonIsUp = !digitalRead(BUTTON_PIN);
   if (buttonWasUp && !buttonIsUp) {
     buttonIsUp = digitalRead(BUTTON_PIN);
     if (digitalRead(BUTTON_PIN)) {
       dispEnabled = !dispEnabled;
       while (digitalRead(BUTTON_PIN)) {}
-      digitalWrite(13, dispEnabled);
+      dispWorking(dispEnabled);
     }
   }
   buttonWasUp = buttonIsUp;
@@ -58,4 +57,9 @@ int printData(float t, float h) {
   lcd.print(h);
   lcd.setCursor(15, 1);
   lcd.print("%");
+}
+
+void dispWorking(bool state) {
+  if (state) lcd.display();
+  else lcd.noDisplay();
 }
