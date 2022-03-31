@@ -27,12 +27,15 @@ void setup() {
 int i = 0;
 void loop() {
   Serial.println(i++);
+
+
   boolean buttonIsUp = !digitalRead(BUTTON_PIN);
   if (buttonWasUp && !buttonIsUp) {
     buttonIsUp = digitalRead(BUTTON_PIN);
-    if (!buttonIsUp) {
+    if (digitalRead(BUTTON_PIN)) {
       ledEnabled = !ledEnabled;
-      digitalWrite(LED_PIN, ledEnabled);
+      while (digitalRead(BUTTON_PIN)) {}
+      digitalWrite(13, ledEnabled);
     }
   }
   buttonWasUp = buttonIsUp;
