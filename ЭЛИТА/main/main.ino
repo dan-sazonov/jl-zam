@@ -2,6 +2,7 @@
 #define BTN_PIN 11
 #define LED_PIN 6
 #define PHOTO_PIN A1
+#define POT_PIN A0
 
 bool ledState = false;
 bool lastPir = false;
@@ -13,12 +14,13 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   pinMode(BTN_PIN, INPUT);
   pinMode(PHOTO_PIN, INPUT);
+  pinMode(POT_PIN, INPUT);
 }
 
 void loop() {
   bool hasMove = digitalRead(IR_PIN);
   int photo = analogRead(PHOTO_PIN);
-
+  int potSignal = analogRead(POT_PIN);
   if (lastPir != hasMove) {
     ledState = hasMove;
     lastPir = hasMove;
@@ -34,6 +36,8 @@ void loop() {
   byte bright = map(photo, 0, 1023, 255, 5);
   bright = constrain(bright, 0, 255);
   ledOn(bright);
+
+  Serial.println(potSignal);
 }
 
 byte ledOn(byte bright) {
