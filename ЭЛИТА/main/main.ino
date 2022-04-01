@@ -31,9 +31,9 @@ void loop() {
   }
   if (!btnState && flag) flag = false;
 
-
-  
-  ledOn(255);
+  byte bright = map(photo, 0, 1023, 255, 5);
+  bright = constrain(bright, 0, 255);
+  ledOn(bright);
 }
 
 byte ledOn(byte bright) {
