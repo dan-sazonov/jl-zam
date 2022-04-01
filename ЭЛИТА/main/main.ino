@@ -3,6 +3,7 @@
 
 bool ledState = false;
 bool lastPir = false;
+bool flag = false;
 
 void setup() {
   Serial.begin(9600);
@@ -18,7 +19,14 @@ void loop() {
     ledState = hasMove;
     lastPir = hasMove;
   }
-  //  Serial.println(wasClicked);
-    digitalWrite(13, ledState);
-    
+
+  bool btnState = digitalRead(11);
+  if (btnState && !flag) {
+    flag = true;
+    ledState = !ledState;
+  }
+  if (!btnState && flag) flag = false;
+
+  digitalWrite(13, ledState);
+
 }
