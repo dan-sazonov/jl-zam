@@ -21,7 +21,7 @@ void loop() {
   bool hasMove = digitalRead(IR_PIN);
   int photo = analogRead(PHOTO_PIN);
   int potSignal = analogRead(POT_PIN);
-  
+
   if (lastPir != hasMove) {
     ledState = hasMove;
     lastPir = hasMove;
