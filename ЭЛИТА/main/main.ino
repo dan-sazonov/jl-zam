@@ -11,7 +11,7 @@ bool flag = false;    // фалг кнопки с ее прошлым состо
 void setup() {
   pinMode(IR_PIN, INPUT);
   pinMode(LED_PIN, OUTPUT);
-  pinMode(BTN_PIN, INPUT);
+  pinMode(BTN_PIN, INPUT_PULLUP);
   pinMode(PHOTO_PIN, INPUT);
   pinMode(POT_PIN, INPUT);
 }
